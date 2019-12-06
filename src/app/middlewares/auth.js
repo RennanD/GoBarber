@@ -2,7 +2,6 @@ import jwt from "jsonwebtoken";
 import { promisify } from "util";
 
 import authConfig from "../../config/auth";
-import { next } from "sucrase/dist/parser/tokenizer";
 
 export default async (req, res, next) => {
   const authHeader = req.headers.authorization;
