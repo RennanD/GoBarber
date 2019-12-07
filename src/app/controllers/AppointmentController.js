@@ -1,8 +1,11 @@
 import * as Yup from "yup";
-import { startOfHour, parseISO, isBefore } from "date-fns";
+import { startOfHour, parseISO, isBefore, format } from "date-fns";
+
 import Appointment from "../models/Appointment";
 import File from "../models/File";
 import User from "../models/User";
+import Notification from "../schemas/Notification";
+import { ptBR } from "date-fns/locale";
 
 class AppointmentController {
   async index(req, res) {
@@ -42,6 +45,8 @@ class AppointmentController {
     if (!(await schema.isValid(req.body)))
       return res.status(400).json({ error: "Validations failed." });
 
+    // Check if this user is a provider
+
     const { provider_id, date } = req.body;
 
     const isProvider = await User.findOne({
@@ -52,6 +57,8 @@ class AppointmentController {
       return res
         .status(401)
         .json({ error: "You can only create appointments with providers" });
+
+    // Check if this date is avaliable
 
     const hourStart = startOfHour(parseISO(date));
 
@@ -66,15 +73,33 @@ class AppointmentController {
       }
     });
 
-    if (checkAvailability)
+    if (checkAvailability) {
       return res
         .status(400)
         .json({ error: "Appointment date is not avaliable" });
+    }
 
     const appointment = await Appointment.create({
       user_id: req.userId,
       provider_id,
-      date
+      date: hourStart
+    });
+
+    // Notify appointment to provider;
+
+    const user = await User.findByPk(req.userId);
+    const formattedDate = format(
+      hourStart,
+      " 'dia' dd 'de' MMMM 'às' HH:mm'h' ",
+      {
+        locale: ptBR
+      }
+    );
+    console.log(provider_id);
+
+    await Notification.create({
+      content: `Novo agendamento de ${user.name} para ${formattedDate}`,
+      user: provider_id
     });
 
     return res.json(appointment);
