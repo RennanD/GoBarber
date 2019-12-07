@@ -1,10 +1,33 @@
 import * as Yup from "yup";
 import { startOfHour, parseISO, isBefore } from "date-fns";
 import Appointment from "../models/Appointment";
+import File from "../models/File";
 import User from "../models/User";
 
 class AppointmentController {
-  async index() {}
+  async index(req, res) {
+    const appointments = await Appointment.findAll({
+      where: { user_id: req.userId, canceled_at: null },
+      order: ["date"],
+      attributes: ["id", "date"],
+      include: [
+        {
+          model: User,
+          as: "provider",
+          attributes: ["id", "name"],
+          include: [
+            {
+              model: File,
+              as: "avatar",
+              attributes: ["id", "path", "url"]
+            }
+          ]
+        }
+      ]
+    });
+
+    return res.json(appointments);
+  }
 
   async store(req, res) {
     const schema = Yup.object().shape({
@@ -24,7 +47,7 @@ class AppointmentController {
     if (!isProvider)
       return res
         .status(401)
-        .json({ error: "You can only create appontments with providers" });
+        .json({ error: "You can only create appointments with providers" });
 
     const hourStart = startOfHour(parseISO(date));
 
