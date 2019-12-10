@@ -105,8 +105,6 @@ class AppointmentController {
       user: provider_id
     });
 
-    await Queue.add();
-
     return res.json(appointment);
   }
 
