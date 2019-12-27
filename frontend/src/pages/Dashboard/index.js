@@ -3,5 +3,5 @@ import React from 'react';
 // import { Container } from './styles';
 
 export default function Dashboard() {
-  return <div />;
+  return <h2>Dashboard</h2>;
 }
