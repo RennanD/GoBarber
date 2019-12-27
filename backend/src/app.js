@@ -1,20 +1,21 @@
-import "dotenv/config";
-import "express-async-errors";
-import express from "express";
-import { resolve } from "path";
-import * as Sentry from "@sentry/node";
-import Youch from "youch";
+import 'dotenv/config';
+import 'express-async-errors';
+import express from 'express';
+import cors from 'cors';
+import { resolve } from 'path';
+import * as Sentry from '@sentry/node';
+import Youch from 'youch';
 
-import sentryConfig from "./config/sentry";
-import routes from "./routes";
+import sentryConfig from './config/sentry';
+import routes from './routes';
 
-import "./database/";
-import { async } from "rxjs/internal/scheduler/async";
+import './database/';
 
 class App {
   constructor() {
     this.server = express();
     Sentry.init(sentryConfig);
+    this.server.use(cors());
     this.middlewares();
     this.routes();
     this.exceptionHandler();
@@ -24,8 +25,8 @@ class App {
     this.server.use(Sentry.Handlers.requestHandler());
     this.server.use(express.json());
     this.server.use(
-      "/files",
-      express.static(resolve(__dirname, "..", "tmp", "uploads"))
+      '/files',
+      express.static(resolve(__dirname, '..', 'tmp', 'uploads'))
     );
   }
 
@@ -36,12 +37,12 @@ class App {
 
   exceptionHandler() {
     this.server.use(async function(err, req, res, next) {
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         const errors = await new Youch(err, req).toJSON();
         return res.status(500).json(errors);
       }
 
-      return res.status(500).json({ error: "Internal server error." });
+      return res.status(500).json({ error: 'Internal server error.' });
     });
   }
 }
