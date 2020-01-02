@@ -21,6 +21,8 @@ export function* singIn({ payload }) {
             return;
         }
 
+        api.defaults.headers['Authorization'] = `Bearer ${token}`;
+
         yield put(singInSuccess(token, user));
 
         history.push('/dashboard');
@@ -31,4 +33,26 @@ export function* singIn({ payload }) {
     }
 }
 
-export default all([takeLatest('@auth/SING_IN_REQUEST', singIn)]);
+export function* singUp({ payload }) {
+    const { name, email, password } = payload;
+
+    try {
+        yield call(api.post, '/users', {
+            name,
+            email,
+            password,
+            provider: true,
+        });
+
+        history.push('/');
+    } catch (err) {
+        toast.error('Falha ao cadastrar, verifique seus dados');
+
+        yield put(singFailure());
+    }
+}
+
+export default all([
+    takeLatest('@auth/SING_IN_REQUEST', singIn),
+    takeLatest('@auth/SING_UP_REQUEST', singUp),
+]);
