@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Image } from 'react-native';
 
 import {
@@ -13,11 +14,17 @@ import {
 import logo from '~/assets/logo.png';
 
 import Background from '~/components/Background';
+import { singInRequest } from '~/store/modules/auth/actions';
 
 export default function SingIn({ navigation }) {
     const passwordRef = useRef();
+    const dispatch = useDispatch();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    function handleSubmit() {}
+    function handleSubmit() {
+        dispatch(singInRequest(email, password));
+    }
 
     return (
         <Background>
@@ -34,6 +41,8 @@ export default function SingIn({ navigation }) {
                         onSubmitEditing={() => {
                             passwordRef.current.focus();
                         }}
+                        value={email}
+                        onChangeText={setEmail}
                     />
                     <FormInput
                         icon="lock-outline"
@@ -42,9 +51,11 @@ export default function SingIn({ navigation }) {
                         ref={passwordRef}
                         returnKeyType="send"
                         onSubmitEditing={handleSubmit}
+                        value={password}
+                        onChangeText={setPassword}
                     />
                 </Form>
-                <SubmitButton onPress={() => {}}>Acessar</SubmitButton>
+                <SubmitButton onPress={handleSubmit}>Acessar</SubmitButton>
 
                 <SignLink onPress={() => navigation.navigate('SingUp')}>
                     <SignText>Criar conta </SignText>
