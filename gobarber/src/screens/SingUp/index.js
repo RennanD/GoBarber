@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Image } from 'react-native';
 
 import {
@@ -13,12 +14,20 @@ import {
 import logo from '~/assets/logo.png';
 
 import Background from '~/components/Background';
+import { singUpRequest } from '~/store/modules/auth/actions';
 
 export default function SingUp({ navigation }) {
     const emailRef = useRef();
     const passwordRef = useRef();
+    const dispatch = useDispatch();
 
-    function handleSubmit() {}
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    function handleSubmit() {
+        dispatch(singUpRequest(name, email, password));
+    }
 
     return (
         <Background>
@@ -33,6 +42,8 @@ export default function SingUp({ navigation }) {
                         onSubmitEditing={() => {
                             emailRef.current.focus();
                         }}
+                        value={name}
+                        onChangeText={setName}
                     />
                     <FormInput
                         icon="mail-outline"
@@ -45,6 +56,8 @@ export default function SingUp({ navigation }) {
                             passwordRef.current.focus();
                         }}
                         ref={emailRef}
+                        value={email}
+                        onChangeText={setEmail}
                     />
                     <FormInput
                         icon="lock-outline"
@@ -53,9 +66,11 @@ export default function SingUp({ navigation }) {
                         returnKeyType="send"
                         onSubmitEditing={handleSubmit}
                         ref={passwordRef}
+                        value={password}
+                        onChangeText={setPassword}
                     />
                 </Form>
-                <SubmitButton onPress={() => {}}>Cadastrar-se</SubmitButton>
+                <SubmitButton onPress={handleSubmit}>Cadastrar-se</SubmitButton>
 
                 <SignLink onPress={() => navigation.navigate('SingIn')}>
                     <SignText>Já tenho login</SignText>

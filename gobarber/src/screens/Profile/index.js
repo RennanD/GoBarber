@@ -16,7 +16,6 @@ import {
     FormInput,
     SubmitButton,
     LogoutButton,
-    LogoutText,
 } from './styles';
 import { singOut } from '~/store/modules/auth/actions';
 

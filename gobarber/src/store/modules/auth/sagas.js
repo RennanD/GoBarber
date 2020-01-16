@@ -50,7 +50,7 @@ export function* singUp({ payload }) {
             password,
         });
 
-        // history.push('/');
+        Alert.alert('Success', 'User successfuly registered');
     } catch ({ response }) {
         Alert.alert('Register failure', response.data.error);
 
