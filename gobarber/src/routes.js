@@ -55,6 +55,7 @@ export default (signed = false) =>
                         Profile,
                     },
                     {
+                        resetOnBlur: true,
                         tabBarOptions: {
                             style: {
                                 backgroundColor: '#8d41a8',

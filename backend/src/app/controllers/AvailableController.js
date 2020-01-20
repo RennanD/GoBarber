@@ -10,7 +10,7 @@ import {
 import { Op } from "sequelize";
 import Appointments from "../models/Appointment";
 
-class AvaliableController {
+class AvailableController {
   async index(req, res) {
     const { date } = req.query;
     const { provider_id } = req.params;
@@ -19,7 +19,7 @@ class AvaliableController {
 
     const searchDate = Number(date);
 
-    const appointments = await Appointments.finddAll({
+    const appointments = await Appointments.findAll({
       where: {
         provider_id,
         canceled_at: null,
@@ -64,4 +64,4 @@ class AvaliableController {
   }
 }
 
-export default new AvaliableController();
+export default new AvailableController();
